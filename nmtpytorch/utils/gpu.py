@@ -13,7 +13,7 @@ class GPUManager(object):
             raise FileNotFoundError("nvidia-smi not found!")
 
         # Boolean map
-        self.free_map = ["None" in l for l in p.stdout.split('\n')
+        self.free_map = [True for l in p.stdout.split('\n')
                          if "Processes" in l]
 
         self.free_count = self.free_map.count(True)
@@ -27,14 +27,16 @@ class GPUManager(object):
              "--format=csv,noheader"],
             stdout=subprocess.PIPE,
             universal_newlines=True)
-
         for line in p.stdout.strip().split('\n'):
             pid, gpu_name, usage = line.split(',')
-            if int(pid) == os.getpid():
-                if name:
-                    return '{} -> {}'.format(gpu_name.strip(), usage.strip())
-                else:
-                    return usage.strip()
+            try:
+                if int(pid) == os.getpid():
+                    if name:
+                        return '{} -> {}'.format(gpu_name.strip(), usage.strip())
+                    else:
+                        return usage.strip()
+            except ValueError:
+                pass
 
         return 'N/A'
 

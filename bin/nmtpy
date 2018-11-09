@@ -44,7 +44,7 @@ if __name__ == '__main__':
                               help='Disable eval_filters given in config')
     parser_trans.add_argument('-b', '--batch-size', type=int, default=16,
                               help='Batch size for beam-search')
-    parser_trans.add_argument('-k', '--beam-size', type=int, default=6,
+    parser_trans.add_argument('-k', '--beam-size', type=int, default=12,
                               help='Beam size for beam-search')
     parser_trans.add_argument('-m', '--max-len', type=int, default=200,
                               help='Maximum sequence length to produce (Default: 200)')

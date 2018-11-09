@@ -3,7 +3,8 @@ import logging
 
 import torch
 
-from ..layers import TextEncoder, ConditionalMMDecoder
+from ..layers import TextEncoder, ConditionalMMDecoder, ConditionalMMDecoder_wmt18
+
 from ..datasets import MultimodalDataset
 from .nmt import NMT
 
@@ -21,12 +22,21 @@ class AttentiveMNMTFeatures(NMT):
             'fusion_type': 'concat',    # Multimodal context fusion (sum|mul|concat)
             'n_channels': 2048,         # depends on the features used
             'alpha_c': 0.0,             # doubly stoch. attention
+            'trg_mul': False,
+            'wmt18': False,
+            'deep_gru': False,
+
         })
 
     def __init__(self, opts):
         super().__init__(opts)
         if self.opts.model['alpha_c'] > 0:
             self.aux_loss['alpha_reg'] = 0.0
+
+        self.decoder_func = ConditionalMMDecoder
+        if self.opts.model['wmt18']:
+            self.decoder_func = ConditionalMMDecoder_wmt18
+
 
     def setup(self, is_train=True):
         self.ctx_sizes['image'] = self.opts.model['n_channels']
@@ -48,7 +58,7 @@ class AttentiveMNMTFeatures(NMT):
             emb_gradscale=self.opts.model['emb_gradscale'])
 
         # Create Decoder
-        self.dec = ConditionalMMDecoder(
+        self.dec = self.decoder_func(
             input_size=self.opts.model['emb_dim'],
             hidden_size=self.opts.model['dec_dim'],
             n_vocab=self.n_trg_vocab,
@@ -65,7 +75,11 @@ class AttentiveMNMTFeatures(NMT):
             att_bottleneck=self.opts.model['att_bottleneck'],
             dropout_out=self.opts.model['dropout_out'],
             emb_maxnorm=self.opts.model['emb_maxnorm'],
-            emb_gradscale=self.opts.model['emb_gradscale'])
+            emb_gradscale=self.opts.model['emb_gradscale'],
+            trg_mul=self.opts.model['trg_mul'],
+            options={
+                'deep_gru': self.opts.model['deep_gru'],
+            })
 
         # Share encoder and decoder weights
         if self.opts.model['tied_emb'] == '3way':
@@ -83,9 +97,15 @@ class AttentiveMNMTFeatures(NMT):
         return dataset
 
     def encode(self, batch):
-        # Get features into (n,c,w*h) and then (w*h,n,c)
-        feats = batch['image'].view(
-            (*batch['image'].shape[:2], -1)).permute(2, 0, 1)
+        feats = batch['image']
+        if len(feats.size()) == 2:
+            # if avg pool, size is of 2 : [batchsizexfeat_number]
+            #need to do 1x32x2048
+            feats = feats.unsqueeze(0)
+        else:
+            # Get features into (n,c,w*h) and then (w*h,n,c)
+            feats = feats.view(
+                (*feats.shape[:2], -1)).permute(2, 0, 1)
 
         return {
             'image': (feats, None),

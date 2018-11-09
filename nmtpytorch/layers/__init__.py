@@ -8,6 +8,7 @@ from .image_encoder import ImageEncoder
 from .text_encoder import TextEncoder
 from .cond_decoder import ConditionalDecoder
 from .condmm_decoder import ConditionalMMDecoder
+from .condmm_decoder_wmt18 import ConditionalMMDecoder_wmt18
 from .simplegru_decoder import SimpleGRUDecoder
 from .xu_decoder import XuDecoder
 from .gru_decoder import GRUDecoder

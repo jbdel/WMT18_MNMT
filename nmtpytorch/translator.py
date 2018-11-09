@@ -12,6 +12,8 @@ from .utils.data import make_dataloader
 from . import models
 from .config import Options
 from .search import beam_search
+from .evaluator import Evaluator
+
 
 logger = logging.getLogger('nmtpytorch')
 
@@ -126,6 +128,14 @@ class Translator(object):
         logger.info('Took {:.3f} seconds, {} sent/sec'.format(
             up_time, math.floor(len(hyps) / up_time)))
 
+        trg_lang = self.instances[0].topology.get_trg_langs()[0]
+        reference_file = self.instances[0].opts.data[split + "_set"][trg_lang]
+        eval_filter = self.instances[0].opts.train['eval_filters']
+
+        self.evaluator = Evaluator(
+            reference_file, ['BLEU', 'METEOR'], filters=eval_filter)
+
+        print(self.evaluator.score(hyps))
         return self.filter(hyps)
 
     def dump(self, hyps, split):
