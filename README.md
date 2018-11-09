@@ -192,3 +192,4 @@ by defining `max_trg_len` in the `[model]` section of your configuration file
 to avoid GPU out of memory errors for very large vocabularies. This is caused
 by the fact that the gradient computation for a batch with very long sequences
 occupies a large amount of memory unless the loss layer is implemented differently.
+# WMT18_MNMT
