@@ -2,13 +2,14 @@
 Solution from UMONS system at WMT 18
 
 Clone the repository. This repository is a fork from the original [nmtpytorch](https://github.com/lium-lst/nmtpytorch/tree/master) framework.
-Use 
-```python
-```
-
-python setup.py develop
 
 To install the framework in your python environement (virtualenv, for example).
+Use 
+```
+python setup.py develop
+```
+
+
 
 To replicate results, simply train 5 models, and then evaluate :
 
