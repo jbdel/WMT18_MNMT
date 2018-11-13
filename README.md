@@ -1,7 +1,13 @@
 # WMT18_MNMT
 Solution from UMONS system at WMT 18
 
-Clone the repository. This repository is a fork from the original [nmtpytorch](https://github.com/lium-lst/nmtpytorch/tree/master) framework.
+This repository is a fork from the original [nmtpytorch](https://github.com/lium-lst/nmtpytorch/tree/master) framework.
+
+Clone this repository using:
+```
+git clone https://github.com/jbdel/WMT18_MNMT.git
+```
+
 
 To install the framework in your python environement (virtualenv, for example).
 Use 
