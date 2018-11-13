@@ -1,5 +1,5 @@
 # WMT18_MNMT
-Solution from UMONS system at WMT 18
+Solution of UMONS system at WMT 18. Describing paper [here](https://arxiv.org/abs/1810.06233)
 
 This repository is a fork from the original [nmtpytorch](https://github.com/lium-lst/nmtpytorch/tree/master) framework.
 
