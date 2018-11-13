@@ -9,7 +9,7 @@ Use
 python setup.py develop
 ```
 
-
+Download the training data folder from [here](https://www.dropbox.com/s/hs1nizadbf5sz2g/data.zip?dl=0) and place it in the root folder.
 
 To replicate results, simply train 5 models, and then evaluate :
 
